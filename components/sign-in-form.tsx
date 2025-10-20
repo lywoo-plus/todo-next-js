@@ -1,5 +1,6 @@
 'use client';
 
+import { signIn } from '@/action/auth';
 import {
   Card,
   CardAction,
@@ -11,7 +12,9 @@ import {
 } from '@/components/ui/card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 import { formSchema as _formSchema } from './sign-up-form';
 import { Button } from './ui/button';
@@ -21,17 +24,25 @@ import { Input } from './ui/input';
 const formSchema = _formSchema.omit({ name: true });
 
 export default function SignInForm() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'lywoo.sroeng@gmail.com',
+      password: 'lywoo@22091996',
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    try {
+      await signIn(data.email, data.password);
+      toast.success('Sign in successfully');
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
   }
 
   return (
@@ -77,6 +88,7 @@ export default function SignInForm() {
                     id={field.name}
                     aria-invalid={fieldState.invalid}
                     placeholder="Password"
+                    type="password"
                   />
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
@@ -96,8 +108,13 @@ export default function SignInForm() {
           >
             Reset
           </Button>
-          <Button type="submit" form="sign-in-form" className="cursor-pointer">
-            Submit
+          <Button
+            disabled={form.formState.isSubmitting}
+            type="submit"
+            form="sign-in-form"
+            className="cursor-pointer"
+          >
+            {form.formState.isSubmitting ? 'Loading' : 'Submit'}
           </Button>
         </Field>
       </CardFooter>

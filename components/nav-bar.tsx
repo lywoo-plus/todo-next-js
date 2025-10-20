@@ -1,17 +1,26 @@
+import { signOut } from '@/action/auth';
+import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { LogOutIcon } from 'lucide-react';
+import { headers } from 'next/headers';
 import { Button } from './ui/button';
 
-export default function NavBar() {
+export default async function NavBar() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   return (
     <nav className={cn('p-4 flex items-center justify-between border-b-2')}>
-      <h1 className="text-3xl font-semibold">Todo List</h1>
+      <h1 className="text-4xl font-semibold">Todo List</h1>
 
-      {false && (
-        <Button variant={'destructive'} size={'lg'}>
-          Log Out
-          <LogOutIcon />
-        </Button>
+      {session?.user && (
+        <form action={signOut}>
+          <Button variant={'destructive'} size={'lg'}>
+            Log Out
+            <LogOutIcon />
+          </Button>
+        </form>
       )}
     </nav>
   );

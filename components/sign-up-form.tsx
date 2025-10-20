@@ -33,7 +33,7 @@ export default function SignUpForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     // Do something with the form values.
     console.log(data);
   }
@@ -98,6 +98,7 @@ export default function SignUpForm() {
                     id={field.name}
                     aria-invalid={fieldState.invalid}
                     placeholder="Password"
+                    type="password"
                   />
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
@@ -118,7 +119,7 @@ export default function SignUpForm() {
             Reset
           </Button>
           <Button type="submit" form="sign-up-form" className="cursor-pointer">
-            Submit
+            {form.formState.isLoading ? 'Loading...' : 'Submit'}
           </Button>
         </Field>
       </CardFooter>
