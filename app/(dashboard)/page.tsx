@@ -1,7 +1,9 @@
+import TodoForm from '@/components/todo-form';
+
 export default function Home() {
   return (
     <div>
-      <h1>dashboard</h1>
+      <TodoForm />
     </div>
   );
 }

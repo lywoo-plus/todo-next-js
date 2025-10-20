@@ -15,12 +15,16 @@ export default async function NavBar() {
       <h1 className="text-4xl font-semibold">Todo List</h1>
 
       {session?.user && (
-        <form action={signOut}>
-          <Button variant={'destructive'} size={'lg'}>
-            Log Out
-            <LogOutIcon />
-          </Button>
-        </form>
+        <section className="flex items-center gap-4">
+          <p>Hello, {session.user.name}!</p>
+
+          <form action={signOut}>
+            <Button variant={'destructive'} size={'lg'} className="cursor-pointer">
+              Log Out
+              <LogOutIcon />
+            </Button>
+          </form>
+        </section>
       )}
     </nav>
   );
