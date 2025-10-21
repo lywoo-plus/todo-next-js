@@ -1,5 +1,6 @@
 'use client';
 
+import { signUp } from '@/action/auth';
 import {
   Card,
   CardAction,
@@ -11,7 +12,9 @@ import {
 } from '@/components/ui/card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import * as z from 'zod';
 import { Button } from './ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from './ui/field';
@@ -24,6 +27,8 @@ export const formSchema = z.object({
 });
 
 export default function SignUpForm() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,8 +39,17 @@ export default function SignUpForm() {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    console.log(data);
+    try {
+      await new Promise((resolve) => {
+        setTimeout(() => resolve(null), 1000);
+      });
+      await signUp(data);
+      toast.success('Sign up successfully');
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
   }
 
   return (
@@ -118,8 +132,13 @@ export default function SignUpForm() {
           >
             Reset
           </Button>
-          <Button type="submit" form="sign-up-form" className="cursor-pointer">
-            {form.formState.isLoading ? 'Loading...' : 'Submit'}
+          <Button
+            disabled={form.formState.isSubmitting}
+            type="submit"
+            form="sign-up-form"
+            className="cursor-pointer"
+          >
+            {form.formState.isSubmitting ? 'Loading...' : 'Submit'}
           </Button>
         </Field>
       </CardFooter>

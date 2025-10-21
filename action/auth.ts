@@ -12,7 +12,10 @@ const formSchema = z.object({
 });
 
 export async function signUp(data: z.infer<typeof formSchema>) {
-  // TODO: implement sign up
+  return auth.api.signUpEmail({
+    body: data,
+    headers: await headers(),
+  });
 }
 
 export async function signIn(email: string, password: string) {

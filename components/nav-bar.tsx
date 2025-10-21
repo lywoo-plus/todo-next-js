@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { LogOutIcon } from 'lucide-react';
 import { headers } from 'next/headers';
+import Link from 'next/link';
 import { Button } from './ui/button';
 
 export default async function NavBar() {
@@ -12,7 +13,9 @@ export default async function NavBar() {
 
   return (
     <nav className={cn('p-4 flex items-center justify-between border-b-2')}>
-      <h1 className="text-4xl font-semibold">Todo List</h1>
+      <h1 className="text-4xl font-semibold">
+        {session?.user ? <Link href={'/'}>Todo List</Link> : 'Todo List'}
+      </h1>
 
       {session?.user && (
         <section className="flex items-center gap-4">
