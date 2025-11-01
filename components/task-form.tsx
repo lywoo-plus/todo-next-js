@@ -1,6 +1,6 @@
 'use client';
 
-import { createTask } from '@/action/task';
+import { createTaskAction } from '@/action/task';
 import {
   Card,
   CardContent,
@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { redirect } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
@@ -23,7 +24,7 @@ export const taskFormSchema = z.object({
 
 export type TaskFormSchemaData = z.infer<typeof taskFormSchema>;
 
-export default function TodoForm() {
+export default function TaskForm() {
   const form = useForm<TaskFormSchemaData>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
@@ -33,16 +34,23 @@ export default function TodoForm() {
 
   async function onSubmit(data: TaskFormSchemaData) {
     try {
-      await createTask(data);
+      await createTaskAction(data);
       form.reset();
       toast.success('Task added successfully');
     } catch (error) {
-      toast.error((error as Error).message);
+      if (error instanceof Error) {
+        toast.error(error.message);
+
+        if (error.message === 'Unauthorized') {
+          toast.error(error.message);
+          redirect('/sign-in');
+        }
+      }
     }
   }
 
   return (
-    <Card className="w-96 mx-auto mt-8">
+    <Card>
       <CardHeader>
         <CardTitle className="text-2xl">Task</CardTitle>
         <CardDescription>New task can be added here</CardDescription>
@@ -84,7 +92,7 @@ export default function TodoForm() {
             disabled={form.formState.isSubmitting || !form.formState.isValid}
             type="submit"
             form="todo-form"
-            className="cursor-pointer bg-blue-500 hover:bg-blue-400"
+            className="cursor-pointer bg-green-600 hover:bg-green-400"
           >
             {form.formState.isSubmitting ? 'Loading' : 'Add'}
           </Button>
